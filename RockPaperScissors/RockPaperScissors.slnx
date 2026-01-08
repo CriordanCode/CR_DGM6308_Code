@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../GuessANumber/GuessANumber.csproj" />
+  <Project Path="GuessNumber/GuessNumber.csproj" />
+</Solution>

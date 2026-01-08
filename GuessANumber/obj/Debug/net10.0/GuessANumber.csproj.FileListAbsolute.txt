@@ -1,0 +1,14 @@
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\bin\Debug\net10.0\GuessANumber.exe
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\bin\Debug\net10.0\GuessANumber.deps.json
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\bin\Debug\net10.0\GuessANumber.runtimeconfig.json
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\bin\Debug\net10.0\GuessANumber.dll
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\bin\Debug\net10.0\GuessANumber.pdb
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.AssemblyInfoInputs.cache
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.AssemblyInfo.cs
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.csproj.CoreCompileInputs.cache
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.dll
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\refint\GuessANumber.dll
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.pdb
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\GuessANumber.genruntimeconfig.cache
+C:\Users\Corwi\OneDrive\Documents\GitHub\GuessANumber\obj\Debug\net10.0\ref\GuessANumber.dll
