@@ -31,6 +31,7 @@ MakeABet:
         else Console.WriteLine("Invalid Bet Amount");
     }
 
+//Code for Requirement B that is made obsolete by Requirement D
 //While loop to get a valid ceiling for the random number selector
 // while(true){
 //     Console.WriteLine("Set the max range for the Computer to choose from:");
@@ -79,22 +80,24 @@ while (true)
         int distAway = Math.Abs(value - input);
         
         //Cases to determine what extra information to give the player
-        if(distAway >= cold)
-        {
-            Console.WriteLine("Your guess was Cold.");   
-        } else if (distAway >= warm)
-        {
-            Console.WriteLine("Your guess was Warm.");
-        } else if (distAway >= hot)
-        {
-            Console.WriteLine("Your guess was Hot!");
-        } else if (distAway >= hotter)
-        {
-            Console.WriteLine("Your guess was Hotter!");
-        } else
+        if (distAway < hotter)
         {
             Console.WriteLine("Your guess was SUPER HOT!");
+        } else if (distAway < hot)
+        {
+            Console.WriteLine("Your guess was Hotter!");
+        } else if (distAway < warm)
+        {
+            Console.WriteLine("Your guess was Hot!");
+        } else if (distAway < cold)
+        {
+            Console.WriteLine("Your guess was Warm.");  
+        } else
+        {
+            Console.WriteLine("Your guess was Cold.");
         }
+
+        
 
         //Subtract one from the guesses and end the loop if that was the last guess
         guessesRemaining--;
