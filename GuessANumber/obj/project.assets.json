@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\GuessANumber\\GuessANumber.csproj",
+      "projectUniqueName": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\GuessANumber\\GuessANumber.csproj",
       "projectName": "GuessANumber",
-      "projectPath": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\GuessANumber\\GuessANumber.csproj",
+      "projectPath": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\GuessANumber\\GuessANumber.csproj",
       "packagesPath": "C:\\Users\\Corwi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\GuessANumber\\obj\\",
+      "outputPath": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\GuessANumber\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Corwi\\AppData\\Roaming\\NuGet\\NuGet.Config"
