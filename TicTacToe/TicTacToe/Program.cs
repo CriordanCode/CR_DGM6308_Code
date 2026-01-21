@@ -150,7 +150,6 @@ while (!closeRequested)
                 {
                     EndGame("  You Lose.");
                     playerTurnA = true;
-                    break;
                 } else
                 {
                     EndGame("  Computer O Wins.");
@@ -195,7 +194,7 @@ while (!closeRequested)
         {
             specialTrigger = true;
         }
-        
+
         //Finally check if the board is full for a draw.
         if (CheckForFullBoard())
         {
