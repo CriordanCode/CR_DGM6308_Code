@@ -327,6 +327,69 @@ while (!closeRequested)
                     }
                     break;
 
+                case ConsoleKey.NumPad1:
+                    if (board[2, 0] is ' ')
+                    {
+                        board[2, 0] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad2:
+                    if (board[2, 1] is ' ')
+                    {
+                        board[2, 1] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad3:
+                    if (board[2, 2] is ' ')
+                    {
+                        board[2, 2] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad4:
+                    if (board[1, 0] is ' ')
+                    {
+                        board[1, 0] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad5:
+                    if (board[1 ,1] is ' ')
+                    {
+                        board[1 ,1] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad6:
+                    if (board[1, 2] is ' ')
+                    {
+                        board[1, 2] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad7:
+                    if (board[0, 0] is ' ')
+                    {
+                        board[0, 0] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad8:
+                    if (board[0, 1] is ' ')
+                    {
+                        board[0, 1] = token;
+                        moved = true;
+                    }
+                    break;
+                case ConsoleKey.NumPad9:
+                    if (board[0, 2] is ' ')
+                    {
+                        board[0, 2] = token;
+                        moved = true;
+                    }
+                    break;
             }
         }
     }
