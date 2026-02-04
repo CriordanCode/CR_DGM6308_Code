@@ -20,12 +20,16 @@ int computer_y = default;
 int computer_skip = default;
 
 //new Variables
+//Tracker for the current variable
 int currentPlayer = 0;
+//Number of humans playing the game
 int humanPlayers = 0;
+//List of player class to track player number, if human, and their score
 List<Player> playerList = new();
+//Simple int for gamemodes (allows for more gamemodes in the future if wanted)
 int gameMode = 0;
-int maxScore = 5;
-//bool bust = false;
+//Max score for the second gamemode, can be adjusted for faster/shorter games
+int maxScore = 50;
 
 try
 {
@@ -58,24 +62,29 @@ void Update()
             Console.Clear();
             break;
 
+        //New case for the game to select which mode the player wants to play each time
         case State.ModeSelect:
             gameMode = GameModeSelect();
             state = State.PlayerSelect;
             Console.Clear();
             break;
 
-        //new case
+        //new case for the game to select how many human players are playing each time
         case State.PlayerSelect:
             humanPlayers = PlayerSelectToContinue();
+            //Loop to add new players to a list for the amount selected
             for (int i = 0; i < humanPlayers; i++)
             {
                 playerList.Add(new Player(i, true, 0));
             }
+            //Loop to fill in the remaining amount with computers
             while(playerList.Count < 4)
             {
                 playerList.Add(new Player(playerList.Count, false, 0));
             }
+            //0 to 4 random who goes first
             playerGoesFirst = Random.Shared.Next(0, 4);
+            //set the current player tracker
             currentPlayer = playerGoesFirst;
             state = State.ConfirmRandomTurnOrder;
             Console.Clear();
@@ -87,7 +96,7 @@ void Update()
             {
                 return;
             }
-            
+            //check the first player if they are human or not
             if (playerList[playerGoesFirst].IsHuman)
             {
                 state = State.PlayerHorizontal;
@@ -99,6 +108,7 @@ void Update()
 
             direction = true;
             x = 0;
+            //if first player is not human setup turn for computer
             if (!playerList[playerGoesFirst].IsHuman)
             {
                 computer_x = Random.Shared.Next(x_max + 1);
@@ -114,17 +124,19 @@ void Update()
             {
                 return;
             }
+            //if the gamemode is the first one end game on 20 darts otherwise keep going
             if (darts.Count >= 20 && gameMode == 0)
             {
                 state = State.ConfirmGameEnd;
                 Console.Clear();
                 break;
             }
-            
+            //current player iterator, if it gets above 3 reset to 0 as that would be out of bounds
             if (++currentPlayer > 3)
             {
                 currentPlayer = 0;
             }
+            //if the next player is human set the next state for human play
             if (playerList[currentPlayer].IsHuman)
             {
                 state = State.PlayerHorizontal;
@@ -142,6 +154,8 @@ void Update()
             Console.Clear();
             break;
 
+        //Same changes that were made in the confirm player throw 
+        //except this runs after a computer makes a throw
         case State.ConfirmComputerThrow:
             PressEnterToContinue();
             if (closeRequested)
@@ -240,13 +254,16 @@ void Update()
                     }
                 }
                 darts.Add(new(position, playerList[currentPlayer]));
+                //Runs the method to calculate the current score after a dart has been added
                 CalculateScore(gameMode);
-                if(playerList[currentPlayer].Score < 0)
+                //Removes darts if in gamemode 1 the score would set the user to below 0
+                if(playerList[currentPlayer].Score < 0 && gameMode == 1)
                 {
                     darts.RemoveAt(darts.Count-1);
-
+                    //If darts are touched recalculate the score
+                    CalculateScore(gameMode);
                 }
-                CalculateScore(gameMode);
+                //If we are in gamemode 1 check if player has a 0 score to end the game
                 if (gameMode == 1)
                 {
                     foreach (Player player in playerList)
@@ -290,12 +307,15 @@ void Update()
                         }
                     }
                     darts.Add(new(position, playerList[currentPlayer]));
+                    //Calculate score after computer throws a dart
                     CalculateScore(gameMode);
-                    if(playerList[currentPlayer].Score < 0)
+                    //If the thrown dart brings them below 0 remove it and recalculate score in gamemode 1
+                    if(playerList[currentPlayer].Score < 0 && gameMode == 1)
                     {
                         darts.RemoveAt(darts.Count-1);
+                        CalculateScore(gameMode);
                     }
-                    CalculateScore(gameMode);
+                    //Check all players for a 0 score to end the game
                     if (gameMode == 1)
                     {
                         foreach (Player player in playerList)
@@ -359,6 +379,7 @@ void PressEnterToContinue()
     }
 }
 
+//Method to select cases or keys 1-4 to set players for option B
 int PlayerSelectToContinue()
 {
     while (true)
@@ -375,6 +396,7 @@ int PlayerSelectToContinue()
     }
 }
 
+//Method to select which gamemode the player(s) would like to play
 int GameModeSelect()
 {
     while (true)
@@ -432,6 +454,7 @@ void Render()
         return;
     }
 
+    //Render for gamemode selection text
     if (state is State.ModeSelect)
     {
         StringBuilder output = new();
@@ -455,6 +478,7 @@ void Render()
         return;
     }
 
+    //Render for player selection test
     if (state is State.PlayerSelect)
     {
         StringBuilder output = new();
@@ -540,25 +564,32 @@ void Render()
         render.AppendLine();
         render.AppendLine("└───────────────────────────────────────┘");
     }
+    //Read the current player and accurately display who's turn it is.
     if (state is State.PlayerHorizontal or State.PlayerVertical)
     {
         render.AppendLine();
         render.AppendLine($"  Player {(currentPlayer + 1)}, it is your turn.");
         render.Append("  Press any key to aim your ○ dart... ");
+        render.AppendLine();
+        RenderScore(render);
     }
     if (state is State.ComputerHorizontal or State.ComputerVertical)
     {
         render.AppendLine();
         render.AppendLine($"  Computer {(currentPlayer + 1)}'s Turn. Wait for it to throw it's ● dart.");
+        RenderScore(render);
     }
+    //Correctly display who is going first and if they are a human or computer
     if (state is State.ConfirmRandomTurnOrder)
     {
         render.AppendLine();
         render.AppendLine("  The game will now randomly determine who is going first. ");
         render.AppendLine((playerList[playerGoesFirst].IsHuman ? "Player" : "Computer") + $" {playerGoesFirst + 1} will go first.");
+        RenderScore(render);
         render.AppendLine();
         render.Append("  Press [enter] to continue...");
     }
+    //Correctly display when someone throws a dart these also render the scoreboard with it
     if (state is State.ConfirmPlayerThrow)
     {
         render.AppendLine();
@@ -568,13 +599,9 @@ void Render()
             render.AppendLine();
             render.AppendLine("  Dart Collision! Both darts fell off the board.");
         }
+        RenderScore(render);
         render.AppendLine();
         render.Append("  Press [enter] to continue...");
-
-        render.AppendLine();
-        render.AppendLine("Scoreboard:");
-        render.AppendLine($"Player 1: {playerList[0].Score}   |   Player 2: {playerList[1].Score}");
-        render.AppendLine($"Player 3: {playerList[2].Score}   |   Player 4: {playerList[3].Score}");
     }
     if (state is State.ConfirmComputerThrow)
     {
@@ -584,14 +611,10 @@ void Render()
         {
             render.AppendLine();
             render.AppendLine("  Dart Collision! Both darts fell off the board.");
-        }   
+        }
+        RenderScore(render);   
         render.AppendLine();
         render.Append("  Press [enter] to continue...");
-
-        render.AppendLine();
-        render.AppendLine("Scoreboard:");
-        render.AppendLine($"Player 1: {playerList[0].Score}   |   Player 2: {playerList[1].Score}");
-        render.AppendLine($"Player 3: {playerList[2].Score}   |   Player 4: {playerList[3].Score}");
     }
     if (state is State.ConfirmGameEnd)
     {
@@ -632,6 +655,7 @@ void Render()
                 render.AppendLine("  " + (playerList[winnerindex].IsHuman ? "Player" : "Computer") + $" {winnerindex + 1} Wins!");
             }
         }
+        //Code to write out winner if second gamemode is active since it is the first player to reach 0 and not highest score.
         else if (gameMode == 1)
         {
             foreach (Player player in playerList)
@@ -700,6 +724,7 @@ void CalculateScore(int GameMode)
             }
         }
     }
+    //Check for gamemode and start subtracting from max value if in the secondary gamemode.
     if (gameMode == 1){
         foreach (Player player in playerList)
         {
@@ -707,6 +732,16 @@ void CalculateScore(int GameMode)
             player.Score = -player.Score;
         }
     }
+    return;
+}
+
+//Method to render the scoreboard since it needs to be written in each state the game could be in.
+void RenderScore(StringBuilder output)
+{
+    output.AppendLine();
+    output.AppendLine("Scoreboard:");
+    output.AppendLine($"Player 1: {playerList[0].Score}   |   Player 2: {playerList[1].Score}");
+    output.AppendLine($"Player 3: {playerList[2].Score}   |   Player 4: {playerList[3].Score}");
     return;
 }
 
@@ -739,3 +774,4 @@ public class Player
     public int Score{get; set;}
 
 }
+
