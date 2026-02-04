@@ -740,8 +740,8 @@ void RenderScore(StringBuilder output)
 {
     output.AppendLine();
     output.AppendLine("Scoreboard:");
-    output.AppendLine($"Player 1: {playerList[0].Score}   |   Player 2: {playerList[1].Score}");
-    output.AppendLine($"Player 3: {playerList[2].Score}   |   Player 4: {playerList[3].Score}");
+    output.AppendLine((playerList[0].IsHuman ? "  Player   " : "  Computer ") + $"1 : {playerList[0].Score}   |   "+ (playerList[1].IsHuman ? "  Player   " : "  Computer ") + $"2: {playerList[1].Score}");
+    output.AppendLine((playerList[2].IsHuman ? "  Player   " : "  Computer ") + $"3 : {playerList[2].Score}   |   "+ (playerList[3].IsHuman ? "  Player   " : "  Computer ") + $"4: {playerList[3].Score}");
     return;
 }
 
