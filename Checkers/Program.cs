@@ -5,9 +5,12 @@ Encoding encoding = Console.OutputEncoding;
 try
 {
 	Console.OutputEncoding = Encoding.UTF8;
+	//New game running showintro screen option
 	Game game = ShowIntroScreenAndGetOption();
 	Console.Clear();
+	//Run tha game loop on the previously created game
 	RunGameLoop(game);
+	//Render the game state in the console
 	RenderGameState(game, promptPressKey: true);
 	Console.ReadKey(true);
 }
@@ -26,6 +29,7 @@ finally
 
 Game ShowIntroScreenAndGetOption()
 {
+	//Write the intro to console
 	Console.Clear();
 	Console.WriteLine();
 	Console.WriteLine("  Checkers");
@@ -52,10 +56,12 @@ Game ShowIntroScreenAndGetOption()
 	Console.WriteLine("    [1] Black (human) vs White (computer)");
 	Console.Write("    [2] Black (human) vs White (human)");
 
+	//Check what the player inputs and set the amount of players for the game of checkers.
 	int? humanPlayerCount = null;
 	while (humanPlayerCount is null)
 	{
 		Console.CursorVisible = false;
+		//Basic switch case for the cursor, inside the while loop will continue until valid selection is made
 		switch (Console.ReadKey(true).Key)
 		{
 			case ConsoleKey.D0 or ConsoleKey.NumPad0: humanPlayerCount = 0; break;
@@ -66,40 +72,56 @@ Game ShowIntroScreenAndGetOption()
 	return new Game(humanPlayerCount.Value);
 }
 
+//Method to run the actual game
 void RunGameLoop(Game game)
 {
+	//Continue the game until a winner is set
 	while (game.Winner is null)
 	{
+		//Set the current player from the list of players in the game
 		Player currentPlayer = game.Players.First(player => player.Color == game.Turn);
+		//Code for if the turn is run by a human player
 		if (currentPlayer.IsHuman)
 		{
 			while (game.Turn == currentPlayer.Color)
 			{
+				//Initialize selection tuple
 				(int X, int Y)? selectionStart = null;
+				//Initialize tuple from the aggressor
 				(int X, int Y)? from = game.Board.Aggressor is not null ? (game.Board.Aggressor.X, game.Board.Aggressor.Y) : null;
+				//Get a list of possible moves
 				List<Move> moves = game.Board.GetPossibleMoves(game.Turn);
+				//If there is only one move possible set it to be that move
 				if (moves.Select(move => move.PieceToMove).Distinct().Count() is 1)
 				{
 					Move must = moves.First();
 					from = (must.PieceToMove.X, must.PieceToMove.Y);
 					selectionStart = must.To;
 				}
+				//Wait for the human to make a selection of where they are moving from
 				while (from is null)
 				{
 					from = HumanMoveSelection(game);
 					selectionStart = from;
 				}
+				//Now they make a selection of where they are moving to
 				(int X, int Y)? to = HumanMoveSelection(game, selectionStart: selectionStart, from: from);
+				//Create a new piece
 				Piece? piece = null;
+				//Set the piece equal to the piece that was at the location of from
 				piece = game.Board[from.Value.X, from.Value.Y];
+				//If there is no piece or the piece is not the right color seet both to null
 				if (piece is null || piece.Color != game.Turn)
 				{
 					from = null;
 					to = null;
 				}
+				//If from and to are not null, attempt to complete the move
 				if (from is not null && to is not null)
 				{
+					//Create a new move and validate that this is a valid game move
 					Move? move = game.Board.ValidateMove(game.Turn, from.Value, to.Value);
+					//If the move is not null & there is a board agressor or moving the piece introduces a board agressor then preform the move
 					if (move is not null &&
 						(game.Board.Aggressor is null || move.PieceToMove == game.Board.Aggressor))
 					{
@@ -108,33 +130,43 @@ void RunGameLoop(Game game)
 				}
 			}
 		}
+		//If player is not human (ie the player is a computer do this)
 		else
 		{
+			//Get a list of the possible moves from the current board state for the current players turn
 			List<Move> moves = game.Board.GetPossibleMoves(game.Turn);
+			//List of capture moves that are possible
 			List<Move> captures = moves.Where(move => move.PieceToCapture is not null).ToList();
+			//If there is a possible capture move, perform one of those at random
 			if (captures.Count > 0)
 			{
 				game.PerformMove(captures[Random.Shared.Next(captures.Count)]);
 			}
+			//If there are no pieces that is promoted then look for the closest rival pieces on the 
+			//board if so attempt to make that move otherwise make a random move
 			else if(!game.Board.Pieces.Any(piece => piece.Color == game.Turn && !piece.Promoted))
 			{
 				var (a, b) = game.Board.GetClosestRivalPieces(game.Turn);
 				Move? priorityMove = moves.FirstOrDefault(move => move.PieceToMove == a && Board.IsTowards(move, b));
 				game.PerformMove(priorityMove ?? moves[Random.Shared.Next(moves.Count)]);
 			}
+			//If all else fails perform a random move off of the list of available moves
 			else
 			{
 				game.PerformMove(moves[Random.Shared.Next(moves.Count)]);
 			}
 		}
-
+		//After a move is completed rerender the gamestate
 		RenderGameState(game, playerMoved: currentPlayer, promptPressKey: true);
+		//Wait for a key press
 		Console.ReadKey(true);
 	}
 }
 
+//Method to render gamestate
 void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? selection = null, (int X, int Y)? from = null, bool promptPressKey = false)
 {
+	//Constant char's for the various pieces of the game
 	const char BlackPiece = '○';
 	const char BlackKing  = '☺';
 	const char WhitePiece = '◙';
@@ -143,6 +175,7 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 
 	Console.CursorVisible = false;
 	Console.SetCursorPosition(0, 0);
+	//StringBuilder for the gameboard
 	StringBuilder sb = new();
 	sb.AppendLine();
 	sb.AppendLine("  Checkers");
@@ -159,10 +192,12 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 	sb.AppendLine($"    ╚═══════════════════╝");
 	sb.AppendLine($"       A B C D E F G H");
 	sb.AppendLine();
+	//Replace selection space with a new character to indicate that
 	if (selection is not null)
 	{
 		sb.Replace(" $ ", $"[{ToChar(game.Board[selection.Value.X, selection.Value.Y])}]");
 	}
+	//Replace the character in the fromm space with another char
 	if (from is not null)
 	{
 		char fromChar = ToChar(game.Board[from.Value.X, from.Value.Y]);
@@ -170,6 +205,7 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 		sb.Replace("@ ",  $"{fromChar}>");
 		sb.Replace(" @",  $"<{fromChar}");
 	}
+	//Piece color for the winner, whoever just moved, and the current turn
 	PieceColor? wc = game.Winner;
 	PieceColor? mc = playerMoved?.Color;
 	PieceColor? tc = game.Turn;
@@ -178,20 +214,25 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 	string w = $"  *** {wc} wins ***";
 	string m = $"  {mc} moved       ";
 	string t = $"  {tc}'s turn      ";
+	//If there is a winner, or a player has not moved cases for append lines
 	sb.AppendLine(
 		game.Winner is not null ? w :
 		playerMoved is not null ? m :
 		t);
 	string p = "  Press any key to continue...";
 	string s = "                              ";
+	//If they are waiting for a keypress prompt them otherwise do not
 	sb.AppendLine(promptPressKey ? p : s);
+	//Write the stringbuilder to console
 	Console.Write(sb);
 
+	//Char B to set based on the board state
 	char B(int x, int y) =>
 		(x, y) == selection ? '$' :
 		(x, y) == from ? '@' :
 		ToChar(game.Board[x, y]);
 
+	//How to change a piece position to the proper character and what to replace it with
 	static char ToChar(Piece? piece) =>
 		piece is null ? Vacant :
 		(piece.Color, piece.Promoted) switch
@@ -204,12 +245,14 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 		};
 }
 
+//Helper method for the player to make a move
 (int X, int Y)? HumanMoveSelection(Game game, (int X, int y)? selectionStart = null, (int X, int Y)? from = null)
 {
 	(int X, int Y) selection = selectionStart ?? (3, 3);
 	while (true)
 	{
 		RenderGameState(game, selection: selection, from: from);
+		//Change the selection based on keys and wait for the player to hit enter to confirm their selection of movement
 		switch (Console.ReadKey(true).Key)
 		{
 			case ConsoleKey.DownArrow:  selection.Y = Math.Max(0, selection.Y - 1); break;

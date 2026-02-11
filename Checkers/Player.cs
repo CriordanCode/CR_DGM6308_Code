@@ -1,5 +1,11 @@
 ﻿namespace Checkers;
 
+//Seperate class for player
+//Includes a bool for if they are human, the color of the piece
+//and includes get methods for both of those values.
+//Also includes a constructor using both of those values to set them.
+//Without including a set method these values are not readily changeable
+//without creating a new player entirely.
 public class Player
 {
 	public bool IsHuman { get; }
