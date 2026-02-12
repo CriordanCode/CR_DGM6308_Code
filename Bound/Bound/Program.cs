@@ -1817,12 +1817,33 @@ Exception? exception = null;
 	}),
 	#endregion
 	#region level 13
-	((4,4),
+	((3,6),
 	new(string Map, TimeSpan Delay)[]
 	{
 		("""
 
-			╔═══════════════════════════════╗
+		    ╔═══════════════════════════════╗
+		    ║                               ║
+		    ║                               ║
+		    ║                               ║
+		    ╚═══════════════════╗           ║
+		                        ║######     ║
+		                        ║           ║
+		                        ║####   ####║
+		                        ║           ║
+		                        ║  #########║
+		                        ║           ║
+		                        ║########  #║
+		                        ║           ║
+		                        ║   ########║
+		                        ║     @     ║
+		                        ╚═══════════╝
+
+		
+		""", TimeSpan.FromSeconds(1)),
+		("""
+
+		    ╔═══════════════════════════════╗
 		    ║                               ║
 		    ║                               ║
 		    ║                               ║
@@ -1849,11 +1870,11 @@ Exception? exception = null;
 	{
 		("""
 
-			╔═══════════════════════════════╗
+		    ╔═══════════════════════════════╗
 		    ║                               ║
 		    ║                               ║
 		    ║                               ║
-		    ╚═══════════════════╗       	║
+		    ╚═══════════════════╗           ║
 		                        ║           ║
 		                        ║           ║
 		                        ║           ║
@@ -1864,13 +1885,12 @@ Exception? exception = null;
 		                        ║           ║
 		                        ║           ║
 		                        ║     @     ║
-		            			╚═══════════╝
-
+		                        ╚═══════════╝
 		
 		""", TimeSpan.FromMilliseconds(50)),
 		("""
 
-			╔═══════════════════════════════╗
+		    ╔═══════════════════════════════╗
 		    ║                               ║
 		    ║                               ║
 		    ║                               ║
@@ -1891,30 +1911,30 @@ Exception? exception = null;
 		""", TimeSpan.FromMilliseconds(5))
 	}),
 	#endregion
-	// #region level 14
-	// ((0,0),
-	// new(string Map, TimeSpan Delay)[]
-	// {
-	// 	("""
+	#region level 14
+	((3,5), new(string Map, TimeSpan Delay)[]
+	{
+		("""
 
-	// 		╔═══════╗		╔═══════╗
-	//         ║       ║		║O     O║
-	//         ║       ║		║       ║
-	// 		║	   O║		║O	   O║
-	//         ╚═══════╝		╚═══════╝
+		    ╔═══════╗       ╔═══════╗
+		    ║       ║       ║O     O║
+		    ║       ║       ║       ║
+		    ║      O║       ║O     O║
+		    ╚═══════╝       ╚═══════╝
+		                             
+		    ╔═══════╗       ╔═══════╗
+		    ║   @   ║       ║O   # O║
+		    ║       ║       ║### ###║
+		    ║       ║       ║       ║
+		    ║       ║       ║       ║
+		    ║   O   ║       ║O     O║
+		    ╚═══════╝       ╚═══════╝
 
-	// 		╔═══════╗		╔═══════╗
-	//         ║   @   ║		║O   # O║
-	//         ║       ║		║### ###║
-	// 		║		║		║       ║
-	// 		║		║		║       ║
-	// 		║	O   ║		║O	   O║
-	//         ╚═══════╝		╚═══════╝
-
-	// 	""", TimeSpan.FromSeconds(.1)),
-	// }),
+		""", TimeSpan.FromSeconds(.1)),
+	}),
 
 	// #endregion
+	#endregion
 ];
 
 try
@@ -1922,7 +1942,7 @@ try
 	bool escape = false;
 	int lives = 100;
 	int frame = 0;
-	int levelIndex = 13;
+	int levelIndex = 15;
 	((int Left, int Top) StartPosition, (string Map, TimeSpan Delay)[] Frames) level = levels[levelIndex];
 	(int Top, int Left) position = level.StartPosition;
 	ConsoleKey lastMovementKey = ConsoleKey.UpArrow;
@@ -1938,7 +1958,13 @@ try
 		Console.WriteLine("  Bound");
 		Console.WriteLine();
 		Console.WriteLine($"  Lives: {lives}   ");
-		Console.WriteLine($"  Level: {levelIndex}");
+		if(levelIndex < 14){
+			Console.WriteLine($"  Level: {levelIndex}");
+		}
+		else
+		{
+			Console.WriteLine($"  Level: {levelIndex - 1}");
+		}
 		int mapTop = Console.CursorTop;
 		Console.Write(level.Frames[frame].Map);
 		string[] map = LineEndRegex().Split(level.Frames[frame].Map);
@@ -1959,11 +1985,14 @@ try
 		{
 			while (Console.KeyAvailable)
 			{
+				levelIndex = checkForReappearlvl13(position.Left, levelIndex);
+				levelIndex = checkForDissapearlvl13(position.Left, levelIndex);
+			
 				switch (Console.ReadKey(true).Key)
 				{
 					case ConsoleKey.UpArrow:
 						lastMovementKey = ConsoleKey.UpArrow;
-						if (map[position.Top - 1][position.Left] is ' ' or '@' or '#')
+						if (map[position.Top - 1][position.Left] is ' ' or '@' or '#' or 'O')
 						{
 							lastMovementKey = ConsoleKey.UpArrow;
 							Console.SetCursorPosition(position.Left, position.Top + mapTop);
@@ -1973,7 +2002,7 @@ try
 						break;
 					case ConsoleKey.DownArrow:
 						lastMovementKey = ConsoleKey.DownArrow;
-						if (map[position.Top + 1][position.Left] is ' ' or '@' or '#')
+						if (map[position.Top + 1][position.Left] is ' ' or '@' or '#' or 'O')
 						{
 							Console.SetCursorPosition(position.Left, position.Top + mapTop);
 							Console.Write(' ');
@@ -1982,27 +2011,20 @@ try
 						break;
 					case ConsoleKey.LeftArrow:
 						lastMovementKey = ConsoleKey.LeftArrow;
-						if (map[position.Top][position.Left - 1] is ' ' or '@' or '#')
+						if (map[position.Top][position.Left - 1] is ' ' or '@' or '#' or 'O')
 						{
 							Console.SetCursorPosition(position.Left, position.Top + mapTop);
 							Console.Write(' ');
 							position.Left--;
-							if(levelIndex == 14)
-							{
-								levelIndex -= checkForReappearlvl13(position.Left);
-							}
+							
 						}
 						break;
 					case ConsoleKey.RightArrow:
 						lastMovementKey = ConsoleKey.RightArrow;
-						if (map[position.Top][position.Left + 1] is ' ' or '@' or '#')
+						if (map[position.Top][position.Left + 1] is ' ' or '@' or '#' or 'O')
 						{
 							Console.SetCursorPosition(position.Left, position.Top + mapTop);
 							Console.Write(' ');
-							if(levelIndex == 13)
-							{
-								levelIndex += checkForDissapearlvl13(position.Left);
-							}
 							position.Left++;
 						}
 						break;
@@ -2035,6 +2057,14 @@ try
 					}
 					Console.SetCursorPosition(position.Left, position.Top + mapTop);
 					Console.Write(GetPlayerChar());
+				}
+				else if (map[position.Top][position.Left] is 'O')
+				{
+					lastMovementKey = ConsoleKey.UpArrow;
+					position = TeleporterUsed(position.Left, position.Top, level.Frames[frame].Map);
+					Console.SetCursorPosition(position.Left, position.Top);
+					Console.Write(GetPlayerChar());
+					Console.Write(' ');
 				}
 				else
 				{
@@ -2096,27 +2126,66 @@ finally
 	Console.WriteLine(exception?.ToString() ?? "Bound was closed.");
 }
 
-int checkForDissapearlvl13(int posLeft)
+int checkForDissapearlvl13(int posLeft, int levelIndex)
 {
-	if (posLeft > 20)
-	{
-		return 1;
-	} else
-	{
-		return 0;
+	if(levelIndex == 13){
+		if (posLeft > 20)
+		{
+			return ++levelIndex;
+		} 
 	}
+	return levelIndex;
 }
 
-int checkForReappearlvl13(int posLeft)
+int checkForReappearlvl13(int posLeft, int levelIndex)
 {
-	if(posLeft < 20)
-	{
-		return 1;
+	if (levelIndex == 14){
+		if(posLeft < 20)
+		{
+			return --levelIndex;
+		}
 	}
-	else
+	return levelIndex;
+}
+
+(int Left, int Top) TeleporterUsed(int currLeft, int currTop, string map)
+{
+	List<(int,int)> teleporters = new List<(int,int)>();
+	string board = map;
+	int tempLeft = 0;
+	int tempTop = 0;
+
+	
+	for(int i = 0; i < board.Length; i++)
 	{
-		return 0;
+		if(board[i] == 'O')
+		{
+
+			teleporters.Add((tempLeft, tempTop));
+		}
+		if(board[i] == '\n')
+		{
+			tempLeft++;
+			tempTop = 0;
+			// tempTop++;
+			// tempLeft = 0;
+		}
+		else
+		{
+			tempTop++;
+			// tempLeft++;
+		}
+		
 	}
+	int rand = Random.Shared.Next(0, teleporters.Count);
+	//Console.SetCursorPosition(5, 20);
+	for(int i = 0; i < teleporters.Count; i++)
+	{
+		//Console.WriteLine(teleporters[i].Item1 + " , " + teleporters[i].Item2);
+	}
+	//Console.WriteLine("Going here: " + teleporters[rand].Item1 + " , " + teleporters[rand].Item2);
+	//Console.ReadKey();
+	return (teleporters[rand].Item1, teleporters[rand].Item2);
 }
 
 partial class Program
