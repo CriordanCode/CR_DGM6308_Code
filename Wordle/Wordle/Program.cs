@@ -8,14 +8,23 @@ Exception? exception = null;
 
 try
 {
+    
     //Declare the location for where the resource file is
     const string wordsResource = "Shared.FiveLetterWords.txt";
     //Create an assembly
     Assembly assembly = Assembly.GetExecutingAssembly();
+    Console.WriteLine(assembly.GetManifestResourceInfo);
     List<string> words = new();
+
     {
-        using Stream stream = assembly.GetManifestResourceStream(wordsResource)!;
-        //If stream cannot be found run this code
+        foreach (string x in assembly.GetManifestResourceNames())
+        {
+            Console.WriteLine($"name: {x}");
+            Console.WriteLine(x);
+            
+        }
+        Console.ReadLine();
+        using Stream stream = assembly.GetManifestResourceStream("Shared.FiveLetterWords.txt")!;
         if (stream is null)
         {
             Console.WriteLine("Error: Missing \"FiveLetterWords.txt\" embedded resource.");
