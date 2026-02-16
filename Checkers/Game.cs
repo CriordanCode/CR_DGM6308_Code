@@ -11,6 +11,13 @@ public class Game
 	//Private to random add traps until 
 	private const bool ShopAdded = false;
 
+	//Private Add Trap Counter
+	private int turnSinceTrap = 0;
+	
+	//Private delay for when a trap should be added
+	private int trapDelay = 5;
+
+
 	//Public variable for the turn, public get but private set
 	public PieceColor Turn { get; private set; }
 	//Public board retrieval during the game
@@ -71,10 +78,12 @@ public class Game
 		CheckForWinner();
 		
 		CheckForTraps();
+		turnSinceTrap++;
 		//Until the shop is added, create a random trap on an open space until 
-		if (!ShopAdded)
+		if (!ShopAdded && turnSinceTrap == trapDelay)
 		{
 			Board.CreateTrapRand(Neutral);
+			turnSinceTrap = 0;
 		}
 		
 	}
@@ -105,21 +114,50 @@ public class Game
 
 	public void CheckForTraps()
 	{
+		Console.WriteLine("Checking for traps");
 		while(Board.Traps.Count > 0)
 		{
+			int range = Board.Traps[0].Range;
+			int xPos = Board.Traps[0].X;
+			int yPos = Board.Traps[0].Y;
+			bool removePiece = false;
+			Console.WriteLine("Reading Range of Trap " + range);
+			List<Piece> removeByTrap = new List<Piece>();
 			foreach(Piece piece in Board.Pieces)
 			{
-				for(int i = 1; i <= Board.Traps[0].Range; i++)
+
+				for(int xIter = xPos - range; xIter <= xPos + range; xIter++)
 				{
-					if(((piece.X + i) == Board.Traps[0].X || (piece.X - i) == Board.Traps[0].X) &&	
-				   		((piece.Y + i) == Board.Traps[0].Y || (piece.Y - i) == Board.Traps[0].Y)){
-						Board.Pieces.Remove(piece);
-					} 
+					for(int yIter = yPos - range; yIter <= yPos + range; yIter++)
+					{
+						if(Board.IsValidPosition(xIter, yIter)){
+							if(yIter == yPos && xIter == xPos)
+							{
+								continue;
+							}	
+							if(piece.X == xIter && piece.Y == yIter)
+							{
+								removePiece = true;
+							}
+						}
+					}
 				}
+				if(removePiece){
+					removeByTrap.Add(piece);		
+					removePiece = false;
+				}
+			}
+			while(removeByTrap.Count > 0)
+			{
+				Board.Pieces.Remove(removeByTrap[0]);
+				removeByTrap.RemoveAt(0);
 			}
 			Board.Pieces.Remove(Board.Traps[0]);
 			Board.Traps.RemoveAt(0);
-		}
-	}
 
+		}
+			
+	}
 }
+
+
