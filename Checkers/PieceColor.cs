@@ -6,4 +6,5 @@ public enum PieceColor
 {
 	Black = 1,
 	White = 2,
+	Neutral = 3,
 }

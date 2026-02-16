@@ -3,18 +3,13 @@ namespace Checkers;
 
 
 
-
-
-public class Trap
+public class Trap : Piece
 {
-    
 
-    public int X { get;set; }
-    public int Y { get;set; }
     public int Cost { get; }
     public int Range { get; }
 
-    public PieceColor TrapOwner { get; init; }
+    // public PieceColor TrapOwner { get; init; }
 
     public string TrapPosition
     {
@@ -24,32 +19,32 @@ public class Trap
 
     
 
-
-
-
-
-
-
-
-
     public Trap(int xPos, int yPos, PieceColor owner)
     {
         X = xPos;
         Y = yPos;
         Cost = 3;
-        TrapOwner = owner;
+        Color = owner;
         Range = 1;
     }
 
     public Trap()
     {
-        X = Random.Shared.Next(0,8);
-        Y = Random.Shared.Next(0,8);
+        X = Random.Shared.Next(0,7);
+        Y = Random.Shared.Next(0,7);
         Cost = 0;
-        TrapOwner = (PieceColor) Random.Shared.Next(0, 2);
+        Color = Neutral;
         Range = 1;
     }
 
+    public Trap(PieceColor owner)
+    {
+        X = Random.Shared.Next(0, 7);
+        Y = Random.Shared.Next(0, 7);
+        Cost = 0;
+        Color = owner;
+        Range = 1;
+    }
 }
 
 

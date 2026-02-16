@@ -1,10 +1,15 @@
-﻿namespace Checkers;
+﻿using System.Diagnostics;
+
+namespace Checkers;
 
 //Class to control the game
 public class Game
 {
 	//Private for the game class to set the amount of pieces per color
 	private const int PiecesPerColor = 12;
+
+	//Private to random add traps until 
+	private const bool ShopAdded = false;
 
 	//Public variable for the turn, public get but private set
 	public PieceColor Turn { get; private set; }
@@ -64,6 +69,14 @@ public class Game
 		}
 		//Check for a winner before moving on with the game after a move has been made
 		CheckForWinner();
+		
+		CheckForTraps();
+		//Until the shop is added, create a random trap on an open space until 
+		if (!ShopAdded)
+		{
+			Board.CreateTrapRand(Neutral);
+		}
+		
 	}
 
 	//Check to see if a win condition has been satisfied
@@ -89,4 +102,24 @@ public class Game
 	//Method to count the amount of pieces that have been taken (uses how many piecess remain to count against)
 	public int TakenCount(PieceColor colour) =>
 		PiecesPerColor - Board.Pieces.Count(piece => piece.Color == colour);
+
+	public void CheckForTraps()
+	{
+		while(Board.Traps.Count > 0)
+		{
+			foreach(Piece piece in Board.Pieces)
+			{
+				for(int i = 1; i <= Board.Traps[0].Range; i++)
+				{
+					if(((piece.X + i) == Board.Traps[0].X || (piece.X - i) == Board.Traps[0].X) &&	
+				   		((piece.Y + i) == Board.Traps[0].Y || (piece.Y - i) == Board.Traps[0].Y)){
+						Board.Pieces.Remove(piece);
+					} 
+				}
+			}
+			Board.Pieces.Remove(Board.Traps[0]);
+			Board.Traps.RemoveAt(0);
+		}
+	}
+
 }

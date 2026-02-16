@@ -1,4 +1,6 @@
-﻿namespace Checkers;
+﻿using System.Drawing;
+
+namespace Checkers;
 
 public class Board
 {
@@ -10,6 +12,9 @@ public class Board
 
 	public Piece? this[int x, int y] =>
 		Pieces.FirstOrDefault(piece => piece.X == x && piece.Y == y);
+
+
+	public List<Trap> Traps { get; }
 
 	//Constructor for the board
 	public Board()
@@ -43,6 +48,7 @@ public class Board
 				new() { NotationPosition ="H8", Color = White},
 				new() { NotationPosition ="H6", Color = White}
 			};
+			Traps = new List<Trap>();
 	}
 
 	//String method to get position in the correct notation from 2 integers
@@ -205,4 +211,38 @@ public class Board
 		int b_distanceSquared = b.Dx * b.Dx + b.Dy * b.Dy;
 		return b_distanceSquared < a_distanceSquared;
 	}
+
+	public void AddTrap(int xTrap, int yTrap, PieceColor currentPlayer)
+	{
+		Traps.Add(new Trap(xTrap, yTrap, currentPlayer));
+	}
+
+	public bool IsEmptySpot(int X, int Y)
+	{
+		foreach(Piece piece in this.Pieces)
+		{
+			if(piece.X == X && piece.Y == Y)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public void CreateTrapRand(PieceColor owner)
+	{
+		int newTrapX = 0;
+		int newTrapY = 0;
+		bool trapCreated = false;
+		while (!trapCreated)
+		{
+			newTrapX = Random.Shared.Next(0,7);
+			newTrapY = Random.Shared.Next(0,7);
+			trapCreated = IsEmptySpot(newTrapX, newTrapY);
+		}
+		Trap current = new Trap(newTrapX, newTrapY, Neutral);
+		Traps.Add(current);
+		Pieces.Add(current);
+	}
+
 }
