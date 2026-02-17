@@ -173,7 +173,7 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 	const char WhiteKing  = '☻';
 	const char Vacant     = '·';
 
-	//New Pieces to be added
+	//New Pieces to be added (first being a trap, final char tbd if 'X' isn't clear enough)
 	const char Trap = 'X';
 
 	Console.CursorVisible = false;
@@ -244,6 +244,7 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 			(Black, true)  => BlackKing,
 			(White, false) => WhitePiece,
 			(White, true)  => WhiteKing,
+			//Included the first special piece a trap
 			(Neutral, false) => Trap,
 			_ => throw new NotImplementedException(),
 		};

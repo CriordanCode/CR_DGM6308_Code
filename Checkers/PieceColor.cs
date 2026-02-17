@@ -6,5 +6,6 @@ public enum PieceColor
 {
 	Black = 1,
 	White = 2,
+	//3rd Team to allow for additional pieces to be added outside of black/white pawns/kings
 	Neutral = 3,
 }

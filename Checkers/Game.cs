@@ -77,7 +77,9 @@ public class Game
 		//Check for a winner before moving on with the game after a move has been made
 		CheckForWinner();
 		
+		//Call the method to resolve any traps on the board
 		CheckForTraps();
+		//Since there is not a trap placed this turn increment the counter
 		turnSinceTrap++;
 		//Until the shop is added, create a random trap on an open space until 
 		if (!ShopAdded && turnSinceTrap == trapDelay)
@@ -112,29 +114,43 @@ public class Game
 	public int TakenCount(PieceColor colour) =>
 		PiecesPerColor - Board.Pieces.Count(piece => piece.Color == colour);
 
+	//Method to check and resolve any traps that remain on the board
 	public void CheckForTraps()
 	{
-		Console.WriteLine("Checking for traps");
+		//Printout line to check method is being called
+		//Console.WriteLine("Checking for traps");
+		//Run while there are any traps on the board
 		while(Board.Traps.Count > 0)
 		{
+			//Get basic information about the current trap being acted on
 			int range = Board.Traps[0].Range;
 			int xPos = Board.Traps[0].X;
 			int yPos = Board.Traps[0].Y;
+			//Boolean for if there is a piece to be removed by the trap
 			bool removePiece = false;
-			Console.WriteLine("Reading Range of Trap " + range);
+			//printoutline to check method was reading a trap
+			//Console.WriteLine("Reading Range of Trap " + range);
+
+			//List of pieces that need to be removed from the trap
 			List<Piece> removeByTrap = new List<Piece>();
+			//Iterate through all of the pieces on the board
 			foreach(Piece piece in Board.Pieces)
 			{
 
+				//Nested for loop that looks at -1/+1 (if range of bomb is only 1, if larger will account for that as well) around the trap position
 				for(int xIter = xPos - range; xIter <= xPos + range; xIter++)
 				{
 					for(int yIter = yPos - range; yIter <= yPos + range; yIter++)
 					{
+						//First check to make sure that this is inrange before acting upon it, if not continue 
+						//(helps with edge cases of a trap being on an edge of the board)
 						if(Board.IsValidPosition(xIter, yIter)){
+							//For when the position is equal to the trap/skip over center
 							if(yIter == yPos && xIter == xPos)
 							{
 								continue;
-							}	
+							}
+							//If the piece is equal to the spot in the loop it will remove it	
 							if(piece.X == xIter && piece.Y == yIter)
 							{
 								removePiece = true;
@@ -142,16 +158,20 @@ public class Game
 						}
 					}
 				}
+				//Add to the list of pieces that need to be removed from the trap
 				if(removePiece){
 					removeByTrap.Add(piece);		
 					removePiece = false;
 				}
 			}
+			//Go through the removeByTrap list and remove from the list of pieces on the board 
+			//and then remove from the first of the list of pieces in removeByTrap
 			while(removeByTrap.Count > 0)
 			{
 				Board.Pieces.Remove(removeByTrap[0]);
 				removeByTrap.RemoveAt(0);
 			}
+			//Remove the first trap from both the board and the list of traps
 			Board.Pieces.Remove(Board.Traps[0]);
 			Board.Traps.RemoveAt(0);
 

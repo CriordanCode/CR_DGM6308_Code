@@ -212,13 +212,18 @@ public class Board
 		return b_distanceSquared < a_distanceSquared;
 	}
 
-	public void AddTrap(int xTrap, int yTrap, PieceColor currentPlayer)
+	//Brief add trap for later use, in the instance that you want to purchase a trap for placement
+	public void AddTrap(int xTrap, int yTrap)
 	{
-		Traps.Add(new Trap(xTrap, yTrap, currentPlayer));
+		Traps.Add(new Trap(xTrap, yTrap, Neutral));
 	}
 
+	//Boolean meethod to check if a spot is empty (ex. looking for an available trap placement)
 	public bool IsEmptySpot(int X, int Y)
 	{
+
+		//Look at each piece in the list and if it is equal 
+		//to the parameter location provided return false
 		foreach(Piece piece in this.Pieces)
 		{
 			if(piece.X == X && piece.Y == Y)
@@ -229,20 +234,44 @@ public class Board
 		return true;
 	}
 
+	//Method to create a trap at a new random location
 	public void CreateTrapRand(PieceColor owner)
 	{
+		//Variables to track where placement of trap is going to be
 		int newTrapX = 0;
 		int newTrapY = 0;
 		bool trapCreated = false;
+		//Until a correct trap has been created run this loop
 		while (!trapCreated)
 		{
+			//New location for trap (checks if its an empty spot);
 			newTrapX = Random.Shared.Next(0,7);
 			newTrapY = Random.Shared.Next(0,7);
 			trapCreated = IsEmptySpot(newTrapX, newTrapY);
 		}
+		//Create the new trap at the current valid spot that has been determined
+		//Add it to the list of traps and pieces to be rendered
 		Trap current = new Trap(newTrapX, newTrapY, Neutral);
 		Traps.Add(current);
 		Pieces.Add(current);
 	}
+
+	//Possible rework of the function simplified
+	//Needs testing before implementing
+	public void CreateTrapRandEasy()
+	{
+		bool trapValid = false;
+		while (!trapValid)
+		{
+			Trap current = new Trap(Random.Shared.Next(0,7), Random.Shared.Next(0,7), Neutral);
+			trapValid = IsEmptySpot(current.X, current.Y);
+			if(trapValid){
+				Traps.Add(current);
+				Pieces.Add(current);
+			}
+		}
+		
+	}
+
 
 }

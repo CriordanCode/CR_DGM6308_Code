@@ -2,15 +2,20 @@ namespace Checkers;
 
 
 
-
+//Child class of piece called trap with additional functionality
+//Child class allows it to be added to the list of pieces that the board
+//renders on game updates
 public class Trap : Piece
 {
 
+    //Variable for cost, when shop is implemented players
+    //will be able to purchase the trap for a price
     public int Cost { get; }
+    //Range variable allows for scalable traps/bombs that
+    //can hit more pieces at once
     public int Range { get; }
 
-    // public PieceColor TrapOwner { get; init; }
-
+    //To string method to get the position of a trap if needed
     public string TrapPosition
     {
         get => Board.ToPositionNotationString(X, Y);
@@ -18,7 +23,7 @@ public class Trap : Piece
     }
 
     
-
+    //Constructor for the trap allowing for it to be coded to a team
     public Trap(int xPos, int yPos, PieceColor owner)
     {
         X = xPos;
@@ -28,6 +33,9 @@ public class Trap : Piece
         Range = 1;
     }
 
+    //***CURRENTLY UNUSED***
+    //General constructor for a trap allowing it to belong to a third part
+    //The netural faction that targets both players traps
     public Trap()
     {
         X = Random.Shared.Next(0,7);
@@ -37,6 +45,9 @@ public class Trap : Piece
         Range = 1;
     }
 
+    //***CURRENTLY UNUSED***
+    //Random trap placement that allows for the placement of a trap randomly
+    //While selecting a color for it
     public Trap(PieceColor owner)
     {
         X = Random.Shared.Next(0, 7);
