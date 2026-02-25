@@ -11,27 +11,42 @@ public class Shop
 {
     private List<ShopPiece> Inventory;
 
-    private StringBuilder display;
+
 
 
     public Shop()
     {
         Inventory = new List<ShopPiece>();
-        display = new StringBuilder();
     }
 
     public void addShopItem(ShopPiece item)
     {
         Inventory.Add(item);
     }
-    public void createShopRender()
+
+    public void RenderShop(List<String> display)
     {
-        display.AppendLine( "|--------------------------------------|");
-        display.AppendLine( "|                 Shop                 |");
-        display.AppendLine( "|--------------------------------------|");
-        display.AppendLine($"|            |            |            |");
-        display.AppendLine($"|            |            |            |");
-        display.AppendLine($"|   Cost: {Inventory[0].getCost()}   |   Cost: {Inventory[1].getCost()}  |   Cost: {Inventory[2].getCost()}  |");
-        display.AppendLine( "|--------------------------------------|");
+        display[3]  += "   ╔══════════════════════════════════════╗";
+        display[4]  += "   ║                 Shop                 ║";
+        display[5]  += "   ║══════════════════════════════════════║";
+        display[6]  += "   ║            ║            ║            ║";
+        display[7]  += "   ║            ║            ║            ║";
+        display[8]  += "   ║            ║            ║            ║";
+        display[9]  += "   ║            ║            ║            ║";
+        display[10] += "   ║            ║            ║            ║";
+        display[11] += "   ╚══════════════════════════════════════╝";
+    }
+
+    public void ClearShop(List<String> display)
+    {
+        display[3]  += "                                           ";
+        display[4]  += "                                           ";
+        display[5]  += "                                           ";
+        display[6]  += "                                           ";
+        display[7]  += "                                           ";
+        display[8]  += "                                           ";
+        display[9]  += "                                           ";
+        display[10] += "                                           ";
+        display[11] += "                                           ";
     }
 }

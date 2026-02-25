@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Corwi\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\Checkers\\Checkers.csproj",
+      "projectUniqueName": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\Checkers\\Checkers.csproj",
       "projectName": "Checkers",
-      "projectPath": "C:\\Users\\Corwi\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\Checkers\\Checkers.csproj",
+      "projectPath": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\Checkers\\Checkers.csproj",
       "packagesPath": "C:\\Users\\Corwi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Corwi\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\Checkers\\obj\\",
+      "outputPath": "C:\\Users\\Corwi\\OneDrive\\Documents\\GitHub\\Corwin_Riordan_DGM6308\\Checkers\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Corwi\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -65,7 +65,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.102/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

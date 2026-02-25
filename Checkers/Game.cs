@@ -17,6 +17,8 @@ public class Game
 	//Private delay for when a trap should be added
 	private int trapDelay = 5;
 
+	public Shop gameShop = new Shop();
+
 
 	//Public variable for the turn, public get but private set
 	public PieceColor Turn { get; private set; }
@@ -43,6 +45,18 @@ public class Game
 		//Start turn with black
 		Turn = Black;
 		//Set winner as null
+		Winner = null;
+	}
+
+	//Constructor for a new game using previous players;
+	public Game(Game input)
+	{
+		Board = new Board();
+		Players = new List<Player>();
+		Players.Add(input.Players[0]);
+		Players.Add(input.Players[1]);
+
+		Turn = Black;
 		Winner = null;
 	}
 
@@ -97,11 +111,15 @@ public class Game
 		if (!Board.Pieces.Any(piece => piece.Color is Black))
 		{
 			Winner = White;
+			//Increment White Score
+			Players[1].Score++;
 		}
 		//If no white pieces remain set the winner to black
 		if (!Board.Pieces.Any(piece => piece.Color is White))
 		{
 			Winner = Black;
+			//Increment Black Score
+			Players[0].Score++;
 		}
 		//If there is no winner and there are no possible moves the winner is the last person to make a move
 		if (Winner is null && Board.GetPossibleMoves(Turn).Count is 0)
@@ -117,9 +135,6 @@ public class Game
 	//Method to check and resolve any traps that remain on the board
 	public void CheckForTraps()
 	{
-		//Printout line to check method is being called
-		//Console.WriteLine("Checking for traps");
-		//Run while there are any traps on the board
 		while(Board.Traps.Count > 0)
 		{
 			//Get basic information about the current trap being acted on
@@ -128,8 +143,6 @@ public class Game
 			int yPos = Board.Traps[0].Y;
 			//Boolean for if there is a piece to be removed by the trap
 			bool removePiece = false;
-			//printoutline to check method was reading a trap
-			//Console.WriteLine("Reading Range of Trap " + range);
 
 			//List of pieces that need to be removed from the trap
 			List<Piece> removeByTrap = new List<Piece>();
@@ -178,6 +191,36 @@ public class Game
 		}
 			
 	}
+
+	public string renderScore()
+	{
+		StringBuilder scoreOut = new StringBuilder();
+		String blackScoreString;
+		String whiteScoreString;
+		if(Players[0].Score < 10)
+		{
+			blackScoreString = "0" + Players[0].Score;
+		} else
+		{
+			blackScoreString = "" + Players[0].Score;
+		}
+		if(Players[1].Score < 10)
+		{
+			whiteScoreString = "0" + Players[1].Score;
+		} else
+		{
+			whiteScoreString = "" + Players[1].Score;
+		}
+		scoreOut.AppendLine("    ╔═══════════════════╗");
+		scoreOut.AppendLine("    ║       Score       ║");
+		
+		scoreOut.AppendLine($"    ║Black: {blackScoreString} White: {whiteScoreString}║");
+		scoreOut.AppendLine("    ╚═══════════════════╝");
+
+
+		return scoreOut.ToString();
+	}
+
 }
 
 

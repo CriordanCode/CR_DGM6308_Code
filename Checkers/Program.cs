@@ -2,17 +2,32 @@
 
 Encoding encoding = Console.OutputEncoding;
 
+bool gameCloseRequested = false;
+bool shopToggle = true;
+
 try
 {
 	Console.OutputEncoding = Encoding.UTF8;
 	//New game running showintro screen option
 	Game game = ShowIntroScreenAndGetOption();
 	Console.Clear();
-	//Run tha game loop on the previously created game
-	RunGameLoop(game);
-	//Render the game state in the console
-	RenderGameState(game, promptPressKey: true);
-	Console.ReadKey(true);
+	// //Run tha game loop on the previously created game
+	// RunGameLoop(game);
+	// //Render the game state in the console
+	// RenderGameState(game, promptPressKey: true);
+	// Console.ReadKey(true);
+
+	while (!gameCloseRequested)
+	{
+		RunGameLoop(game);
+		RenderGameState(game, promptPressKey: true);
+		if(Console.ReadKey(true).Key == ConsoleKey.Escape)
+		{
+			gameCloseRequested = true;
+		}
+		game = GameCleanUp(game);
+	}
+
 }
 catch (Exception e)
 {
@@ -163,9 +178,15 @@ void RunGameLoop(Game game)
 	}
 }
 
+Game GameCleanUp(Game game)
+{
+	return new Game(game);
+}
+
 //Method to render gamestate
 void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? selection = null, (int X, int Y)? from = null, bool promptPressKey = false)
 {
+	//Console.Clear();
 	//Constant char's for the various pieces of the game
 	const char BlackPiece = '○';
 	const char BlackKing  = '☺';
@@ -176,25 +197,58 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 	//New Pieces to be added (first being a trap, final char tbd if 'X' isn't clear enough)
 	const char Trap = 'X';
 
+	//List of strings for easier modification line by line
+	List<String> printOut = new List<String>();
+
+	printOut.Add("");
+	printOut.Add("  Checkers");
+	printOut.Add("");
+	printOut.Add($"    ╔═══════════════════╗                  ");
+	printOut.Add($"  8 ║  {B(0, 7)} {B(1, 7)} {B(2, 7)} {B(3, 7)} {B(4, 7)} {B(5, 7)} {B(6, 7)} {B(7, 7)}  ║ {BlackPiece} = Black        ");
+	printOut.Add($"  7 ║  {B(0, 6)} {B(1, 6)} {B(2, 6)} {B(3, 6)} {B(4, 6)} {B(5, 6)} {B(6, 6)} {B(7, 6)}  ║ {BlackKing} = Black King   ");
+	printOut.Add($"  6 ║  {B(0, 5)} {B(1, 5)} {B(2, 5)} {B(3, 5)} {B(4, 5)} {B(5, 5)} {B(6, 5)} {B(7, 5)}  ║ {WhitePiece} = White        ");
+	printOut.Add($"  5 ║  {B(0, 4)} {B(1, 4)} {B(2, 4)} {B(3, 4)} {B(4, 4)} {B(5, 4)} {B(6, 4)} {B(7, 4)}  ║ {WhiteKing} = White King   ");
+	printOut.Add($"  4 ║  {B(0, 3)} {B(1, 3)} {B(2, 3)} {B(3, 3)} {B(4, 3)} {B(5, 3)} {B(6, 3)} {B(7, 3)}  ║ {Trap} = Trap Placed  ");
+	printOut.Add($"  3 ║  {B(0, 2)} {B(1, 2)} {B(2, 2)} {B(3, 2)} {B(4, 2)} {B(5, 2)} {B(6, 2)} {B(7, 2)}  ║ Taken:           ");
+	printOut.Add($"  2 ║  {B(0, 1)} {B(1, 1)} {B(2, 1)} {B(3, 1)} {B(4, 1)} {B(5, 1)} {B(6, 1)} {B(7, 1)}  ║ {game.TakenCount(White),2} x {WhitePiece}           ");
+	printOut.Add($"  1 ║  {B(0, 0)} {B(1, 0)} {B(2, 0)} {B(3, 0)} {B(4, 0)} {B(5, 0)} {B(6, 0)} {B(7, 0)}  ║ {game.TakenCount(Black),2} x {BlackPiece}           ");
+	printOut.Add($"    ╚═══════════════════╝");
+	printOut.Add($"       A B C D E F G H");
+	printOut.Add("");
+
+	if(shopToggle){
+		game.gameShop.RenderShop(printOut);
+	} else
+	{
+		game.gameShop.ClearShop(printOut);
+	}
 	Console.CursorVisible = false;
 	Console.SetCursorPosition(0, 0);
 	//StringBuilder for the gameboard
 	StringBuilder sb = new();
-	sb.AppendLine();
-	sb.AppendLine("  Checkers");
-	sb.AppendLine();
-	sb.AppendLine($"    ╔═══════════════════╗");
-	sb.AppendLine($"  8 ║  {B(0, 7)} {B(1, 7)} {B(2, 7)} {B(3, 7)} {B(4, 7)} {B(5, 7)} {B(6, 7)} {B(7, 7)}  ║ {BlackPiece} = Black");
-	sb.AppendLine($"  7 ║  {B(0, 6)} {B(1, 6)} {B(2, 6)} {B(3, 6)} {B(4, 6)} {B(5, 6)} {B(6, 6)} {B(7, 6)}  ║ {BlackKing} = Black King");
-	sb.AppendLine($"  6 ║  {B(0, 5)} {B(1, 5)} {B(2, 5)} {B(3, 5)} {B(4, 5)} {B(5, 5)} {B(6, 5)} {B(7, 5)}  ║ {WhitePiece} = White");
-	sb.AppendLine($"  5 ║  {B(0, 4)} {B(1, 4)} {B(2, 4)} {B(3, 4)} {B(4, 4)} {B(5, 4)} {B(6, 4)} {B(7, 4)}  ║ {WhiteKing} = White King");
-	sb.AppendLine($"  4 ║  {B(0, 3)} {B(1, 3)} {B(2, 3)} {B(3, 3)} {B(4, 3)} {B(5, 3)} {B(6, 3)} {B(7, 3)}  ║ {Trap} = Trap Placed");
-	sb.AppendLine($"  3 ║  {B(0, 2)} {B(1, 2)} {B(2, 2)} {B(3, 2)} {B(4, 2)} {B(5, 2)} {B(6, 2)} {B(7, 2)}  ║ Taken:");
-	sb.AppendLine($"  2 ║  {B(0, 1)} {B(1, 1)} {B(2, 1)} {B(3, 1)} {B(4, 1)} {B(5, 1)} {B(6, 1)} {B(7, 1)}  ║ {game.TakenCount(White),2} x {WhitePiece}");
-	sb.AppendLine($"  1 ║  {B(0, 0)} {B(1, 0)} {B(2, 0)} {B(3, 0)} {B(4, 0)} {B(5, 0)} {B(6, 0)} {B(7, 0)}  ║ {game.TakenCount(Black),2} x {BlackPiece}");
-	sb.AppendLine($"    ╚═══════════════════╝");
-	sb.AppendLine($"       A B C D E F G H");
-	sb.AppendLine();
+	// sb.AppendLine();
+	// sb.AppendLine("  Checkers");
+	// sb.AppendLine();
+	// sb.AppendLine($"    ╔═══════════════════╗");
+	// sb.AppendLine($"  8 ║  {B(0, 7)} {B(1, 7)} {B(2, 7)} {B(3, 7)} {B(4, 7)} {B(5, 7)} {B(6, 7)} {B(7, 7)}  ║ {BlackPiece} = Black");
+	// sb.AppendLine($"  7 ║  {B(0, 6)} {B(1, 6)} {B(2, 6)} {B(3, 6)} {B(4, 6)} {B(5, 6)} {B(6, 6)} {B(7, 6)}  ║ {BlackKing} = Black King");
+	// sb.AppendLine($"  6 ║  {B(0, 5)} {B(1, 5)} {B(2, 5)} {B(3, 5)} {B(4, 5)} {B(5, 5)} {B(6, 5)} {B(7, 5)}  ║ {WhitePiece} = White");
+	// sb.AppendLine($"  5 ║  {B(0, 4)} {B(1, 4)} {B(2, 4)} {B(3, 4)} {B(4, 4)} {B(5, 4)} {B(6, 4)} {B(7, 4)}  ║ {WhiteKing} = White King");
+	// sb.AppendLine($"  4 ║  {B(0, 3)} {B(1, 3)} {B(2, 3)} {B(3, 3)} {B(4, 3)} {B(5, 3)} {B(6, 3)} {B(7, 3)}  ║ {Trap} = Trap Placed");
+	// sb.AppendLine($"  3 ║  {B(0, 2)} {B(1, 2)} {B(2, 2)} {B(3, 2)} {B(4, 2)} {B(5, 2)} {B(6, 2)} {B(7, 2)}  ║ Taken:");
+	// sb.AppendLine($"  2 ║  {B(0, 1)} {B(1, 1)} {B(2, 1)} {B(3, 1)} {B(4, 1)} {B(5, 1)} {B(6, 1)} {B(7, 1)}  ║ {game.TakenCount(White),2} x {WhitePiece}");
+	// sb.AppendLine($"  1 ║  {B(0, 0)} {B(1, 0)} {B(2, 0)} {B(3, 0)} {B(4, 0)} {B(5, 0)} {B(6, 0)} {B(7, 0)}  ║ {game.TakenCount(Black),2} x {BlackPiece}");
+	// sb.AppendLine($"    ╚═══════════════════╝");
+	// sb.AppendLine($"       A B C D E F G H");
+	// sb.AppendLine();
+
+	foreach(string renderString in printOut)
+	{
+		sb.AppendLine(renderString);
+	}
+
+	//Score Section
+	sb.AppendLine(game.renderScore());
 	//Replace selection space with a new character to indicate that
 	if (selection is not null)
 	{
@@ -222,10 +276,17 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 		game.Winner is not null ? w :
 		playerMoved is not null ? m :
 		t);
+	sb.AppendLine("  Press K to toggle the Shop");
 	string p = "  Press any key to continue...";
 	string s = "                              ";
 	//If they are waiting for a keypress prompt them otherwise do not
 	sb.AppendLine(promptPressKey ? p : s);
+	
+	
+	
+	
+	
+	
 	//Write the stringbuilder to console
 	Console.Write(sb);
 
@@ -266,6 +327,7 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 			case ConsoleKey.RightArrow: selection.X = Math.Min(7, selection.X + 1); break;
 			case ConsoleKey.Enter:      return selection;
 			case ConsoleKey.Escape:     return null;
+			case ConsoleKey.K:			shopToggle = !shopToggle; break;
 		}
 	}
 }
