@@ -263,6 +263,7 @@ public class Board
 		bool trapValid = false;
 		while (!trapValid)
 		{
+			//Unsure if this is memory problem since it will create new objects that don't get used if in wrong spot.
 			Trap current = new Trap(Random.Shared.Next(0,7), Random.Shared.Next(0,7), Neutral);
 			trapValid = IsEmptySpot(current.X, current.Y);
 			if(trapValid){
