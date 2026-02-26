@@ -13,10 +13,12 @@ public class Player
 
 	public int Score{ get; set;}
 
+	public int ShopPurchases {get; set;}
 	public Player(bool isHuman, PieceColor color)
 	{
 		IsHuman = isHuman;
 		Color = color;
 		Score = 0;
+		ShopPurchases = 0;
 	}
 }

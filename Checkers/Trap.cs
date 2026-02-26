@@ -5,12 +5,12 @@ namespace Checkers;
 //Child class of piece called trap with additional functionality
 //Child class allows it to be added to the list of pieces that the board
 //renders on game updates
-public class Trap : Piece
+public class Trap : ShopPiece
 {
 
     //Variable for cost, when shop is implemented players
     //will be able to purchase the trap for a price
-    public int Cost { get; }
+    //public int Cost { get; }
     //Range variable allows for scalable traps/bombs that
     //can hit more pieces at once
     public int Range { get; }
@@ -31,6 +31,8 @@ public class Trap : Piece
         Cost = 3;
         Color = owner;
         Range = 1;
+        Name = "Trap";
+        Symbol = 'X';
     }
 
     //***CURRENTLY UNUSED***
@@ -40,9 +42,11 @@ public class Trap : Piece
     {
         X = Random.Shared.Next(0,7);
         Y = Random.Shared.Next(0,7);
-        Cost = 0;
+        Cost = 3;
         Color = Neutral;
         Range = 1;
+        Name = "Trap";
+        Symbol = 'X';
     }
 
     //***CURRENTLY UNUSED***
@@ -52,9 +56,11 @@ public class Trap : Piece
     {
         X = Random.Shared.Next(0, 7);
         Y = Random.Shared.Next(0, 7);
-        Cost = 0;
+        Cost = 3;
         Color = owner;
         Range = 1;
+        Name = "Trap";
+        Symbol = 'X';
     }
 }
 

@@ -13,7 +13,7 @@ public class Board
 	public Piece? this[int x, int y] =>
 		Pieces.FirstOrDefault(piece => piece.X == x && piece.Y == y);
 
-
+	//List of traps on the board
 	public List<Trap> Traps { get; }
 
 	//Constructor for the board
@@ -234,39 +234,19 @@ public class Board
 		return true;
 	}
 
-	//Method to create a trap at a new random location
-	public void CreateTrapRand(PieceColor owner)
-	{
-		//Variables to track where placement of trap is going to be
-		int newTrapX = 0;
-		int newTrapY = 0;
-		bool trapCreated = false;
-		//Until a correct trap has been created run this loop
-		while (!trapCreated)
-		{
-			//New location for trap (checks if its an empty spot);
-			newTrapX = Random.Shared.Next(0,7);
-			newTrapY = Random.Shared.Next(0,7);
-			trapCreated = IsEmptySpot(newTrapX, newTrapY);
-		}
-		//Create the new trap at the current valid spot that has been determined
-		//Add it to the list of traps and pieces to be rendered
-		Trap current = new Trap(newTrapX, newTrapY, Neutral);
-		Traps.Add(current);
-		Pieces.Add(current);
-	}
 
-	//Possible rework of the function simplified
-	//Needs testing before implementing
-	public void CreateTrapRandEasy()
+
+	
+	public void CreateTrapRand()
 	{
 		bool trapValid = false;
 		while (!trapValid)
 		{
-			//Unsure if this is memory problem since it will create new objects that don't get used if in wrong spot.
+			//New location for trap (checks if its an empty spot);
 			Trap current = new Trap(Random.Shared.Next(0,7), Random.Shared.Next(0,7), Neutral);
 			trapValid = IsEmptySpot(current.X, current.Y);
 			if(trapValid){
+				//Add it to the list of traps and pieces to be rendered
 				Traps.Add(current);
 				Pieces.Add(current);
 			}
@@ -274,5 +254,33 @@ public class Board
 		
 	}
 
+	public void CreateTrapBlack()
+	{
+		bool trapValid = false;
+		while (!trapValid)
+		{
+			Trap current = new Trap(Random.Shared.Next(0,7), Random.Shared.Next(4,7), Neutral);
+			trapValid = IsEmptySpot(current.X, current.Y);
+			if (trapValid)
+			{
+				Traps.Add(current);
+				Pieces.Add(current);
+			}
+		}
+	}
 
+	public void CreateTrapWhite()
+	{
+		bool trapValid = false;
+		while (!trapValid)
+		{
+			Trap current = new Trap(Random.Shared.Next(0,7), Random.Shared.Next(0,4), Neutral);
+			trapValid = IsEmptySpot(current.X, current.Y);
+			if (trapValid)
+			{
+				Traps.Add(current);
+				Pieces.Add(current);
+			}
+		}
+	}
 }

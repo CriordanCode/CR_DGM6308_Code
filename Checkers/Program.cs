@@ -209,18 +209,18 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 	printOut.Add($"  6 ║  {B(0, 5)} {B(1, 5)} {B(2, 5)} {B(3, 5)} {B(4, 5)} {B(5, 5)} {B(6, 5)} {B(7, 5)}  ║ {WhitePiece} = White        ");
 	printOut.Add($"  5 ║  {B(0, 4)} {B(1, 4)} {B(2, 4)} {B(3, 4)} {B(4, 4)} {B(5, 4)} {B(6, 4)} {B(7, 4)}  ║ {WhiteKing} = White King   ");
 	printOut.Add($"  4 ║  {B(0, 3)} {B(1, 3)} {B(2, 3)} {B(3, 3)} {B(4, 3)} {B(5, 3)} {B(6, 3)} {B(7, 3)}  ║ {Trap} = Trap Placed  ");
-	printOut.Add($"  3 ║  {B(0, 2)} {B(1, 2)} {B(2, 2)} {B(3, 2)} {B(4, 2)} {B(5, 2)} {B(6, 2)} {B(7, 2)}  ║ Taken:           ");
-	printOut.Add($"  2 ║  {B(0, 1)} {B(1, 1)} {B(2, 1)} {B(3, 1)} {B(4, 1)} {B(5, 1)} {B(6, 1)} {B(7, 1)}  ║ {game.TakenCount(White),2} x {WhitePiece}           ");
-	printOut.Add($"  1 ║  {B(0, 0)} {B(1, 0)} {B(2, 0)} {B(3, 0)} {B(4, 0)} {B(5, 0)} {B(6, 0)} {B(7, 0)}  ║ {game.TakenCount(Black),2} x {BlackPiece}           ");
+	printOut.Add($"  3 ║  {B(0, 2)} {B(1, 2)} {B(2, 2)} {B(3, 2)} {B(4, 2)} {B(5, 2)} {B(6, 2)} {B(7, 2)}  ║ Piece Score:     ");
+	printOut.Add($"  2 ║  {B(0, 1)} {B(1, 1)} {B(2, 1)} {B(3, 1)} {B(4, 1)} {B(5, 1)} {B(6, 1)} {B(7, 1)}  ║ {game.TakenScore(White),2} x {WhitePiece}           ");
+	printOut.Add($"  1 ║  {B(0, 0)} {B(1, 0)} {B(2, 0)} {B(3, 0)} {B(4, 0)} {B(5, 0)} {B(6, 0)} {B(7, 0)}  ║ {game.TakenScore(Black),2} x {BlackPiece}           ");
 	printOut.Add($"    ╚═══════════════════╝");
 	printOut.Add($"       A B C D E F G H");
 	printOut.Add("");
 
 	if(shopToggle){
-		game.gameShop.RenderShop(printOut);
+		game.GameShop.RenderShop(printOut);
 	} else
 	{
-		game.gameShop.ClearShop(printOut);
+		game.GameShop.ClearShop(printOut);
 	}
 	Console.CursorVisible = false;
 	Console.SetCursorPosition(0, 0);
@@ -277,8 +277,11 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 		playerMoved is not null ? m :
 		t);
 	sb.AppendLine("  Press K to toggle the Shop");
-	string p = "  Press any key to continue...";
-	string s = "                              ";
+	if(shopToggle){
+		sb.AppendLine("  Press P to purchase an item from the Shop");
+	}
+	string p = "  Press any key to continue...                    ";
+	string s = "                                                  ";
 	//If they are waiting for a keypress prompt them otherwise do not
 	sb.AppendLine(promptPressKey ? p : s);
 	
@@ -328,6 +331,7 @@ void RenderGameState(Game game, Player? playerMoved = null, (int X, int Y)? sele
 			case ConsoleKey.Enter:      return selection;
 			case ConsoleKey.Escape:     return null;
 			case ConsoleKey.K:			shopToggle = !shopToggle; break;
+			case ConsoleKey.P:			game.GameShop.ShopSelection(game); break;
 		}
 	}
 }

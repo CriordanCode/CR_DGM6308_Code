@@ -9,7 +9,7 @@ public class Game
 	private const int PiecesPerColor = 12;
 
 	//Private to random add traps until 
-	private const bool ShopAdded = false;
+	private const bool ShopAdded = true;
 
 	//Private Add Trap Counter
 	private int turnSinceTrap = 0;
@@ -17,7 +17,7 @@ public class Game
 	//Private delay for when a trap should be added
 	private int trapDelay = 5;
 
-	public Shop gameShop = new Shop();
+	public Shop GameShop;
 
 
 	//Public variable for the turn, public get but private set
@@ -46,18 +46,34 @@ public class Game
 		Turn = Black;
 		//Set winner as null
 		Winner = null;
+
+		//Stock the shop with 5 traps
+		GameShop = new Shop();
+		while(GameShop.Inventory.Count < 5)
+		{
+			GameShop.addShopItem(new Trap());
+		}
+
 	}
 
-	//Constructor for a new game using previous players;
+	//Constructor for a new game using previous players
 	public Game(Game input)
 	{
 		Board = new Board();
 		Players = new List<Player>();
 		Players.Add(input.Players[0]);
 		Players.Add(input.Players[1]);
-
+		Players[0].ShopPurchases = 0;
+		Players[1].ShopPurchases = 0;
 		Turn = Black;
 		Winner = null;
+
+		GameShop = new Shop();
+		while(GameShop.Inventory.Count < 5)
+		{
+			GameShop.addShopItem(new Trap());
+		}
+
 	}
 
 	//Method to allow for a move to happen
@@ -98,7 +114,7 @@ public class Game
 		//Until the shop is added, create a random trap on an open space until 
 		if (!ShopAdded && turnSinceTrap == trapDelay)
 		{
-			Board.CreateTrapRand(Neutral);
+			Board.CreateTrapRand();
 			turnSinceTrap = 0;
 		}
 		
@@ -131,6 +147,17 @@ public class Game
 	//Method to count the amount of pieces that have been taken (uses how many piecess remain to count against)
 	public int TakenCount(PieceColor colour) =>
 		PiecesPerColor - Board.Pieces.Count(piece => piece.Color == colour);
+
+	public int TakenScore(PieceColor color)
+	{
+		switch (color)
+		{
+			case Black: return TakenCount(Black) - Players[0].ShopPurchases;
+			case White: return TakenCount(White) - Players[1].ShopPurchases;
+		}
+		return 0;
+	}
+
 
 	//Method to check and resolve any traps that remain on the board
 	public void CheckForTraps()
@@ -192,6 +219,7 @@ public class Game
 			
 	}
 
+	//Method to generate the score box into a string
 	public string renderScore()
 	{
 		StringBuilder scoreOut = new StringBuilder();
